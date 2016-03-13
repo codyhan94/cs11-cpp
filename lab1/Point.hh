@@ -1,4 +1,9 @@
-// A 2-dimensional point class!
+#ifndef _POINT_H_
+#define _POINT_H_
+
+#include <iostream>
+
+// A 3-dimensional point class!
 // Coordinates are double-precision floating point.
 class Point {
 
@@ -25,11 +30,12 @@ public:
     double getY();
     double getZ();
 
-    // Operator overload for convenience
-    ostream &operator<<(ostream &os, Point &p) {
-        return os << "(" << p.x_coord << ", " << p.y_coord << ", " << p.z_coord
-            << ")";
-    }
-
     double distanceTo(Point &p);
 };
+
+// Operator overload for convenience
+inline std::ostream& operator << (std::ostream &os, Point &p) {
+    return os << "(" << p.getX() << ", " << p.getY() << ", " << p.getZ() << ")";
+}
+
+#endif /* End of include guard for Point.hh */

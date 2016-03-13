@@ -1,3 +1,7 @@
+#include <iostream>
+
+#include "Point.hh"
+
 #define NUM_POINTS 3
 
 int main(int argc, char const *argv[])
@@ -10,9 +14,11 @@ int main(int argc, char const *argv[])
 
     for (i = 0; i < NUM_POINTS; i++)
     {
-        cout << "Enter 3 coordinates separated by whitespace for point " << i << ":";
+        cout << "Enter 3 coordinates separated by whitespace for point " << i << ": ";
         cin >> x >> y >> z;
-        buf[i] = Point(x, y, z);
+        buf[i].setX(x);
+        buf[i].setY(y);
+        buf[i].setZ(z);
     }
 
     for (i = 0; i < NUM_POINTS; i++)

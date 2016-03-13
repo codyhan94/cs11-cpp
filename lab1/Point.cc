@@ -32,7 +32,7 @@ void Point::setY(double val) {
     y_coord = val;
 }
 
-void Point::setY(double val) {
+void Point::setZ(double val) {
     z_coord = val;
 }
 
