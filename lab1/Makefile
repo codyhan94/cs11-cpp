@@ -1,5 +1,5 @@
 CXX=g++
-CPPFLAGS=-g -pedantic -std=c++11 -Wall
+CPPFLAGS=-g -pedantic -std=c++14 -Wall
 SRCS=lab1.cc Point.cc
 OBJS=$(SRCS:.cc=.o)
 MAIN=lab1
