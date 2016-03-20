@@ -37,7 +37,7 @@ int main(int argc, char const *argv[])
     for (i = 0; i < NUM_POINTS; i++)
     {
         cout << "Enter 3 coordinates separated by whitespace for point " <<
-            i << ": " << endl;
+            i << ":" << endl;
         cin >> x >> y >> z;
         buf[i] = Point(x, y, z);
     }
