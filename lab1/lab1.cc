@@ -39,9 +39,7 @@ int main(int argc, char const *argv[])
         cout << "Enter 3 coordinates separated by whitespace for point " <<
             i << ": " << endl;
         cin >> x >> y >> z;
-        buf[i].setX(x);
-        buf[i].setY(y);
-        buf[i].setZ(z);
+        buf[i] = Point(x, y, z);
     }
 
     /* Compute the area of the triangle determined by the 3 points. */
