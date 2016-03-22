@@ -305,16 +305,15 @@ void Maze::print(ostream &os) const
         }
 
         /* Finish the wall if there is one at the end of row r. */
-        os << (hasWall(r, c, Direction::EAST) ? "|" : " ");
+        os << (hasWall(r, c - 1, Direction::EAST) ? "|" : " ");
 
         os << std::endl;
     }
 
     /* Print the walls below the last row. */
-    r = numRows - 1;
     os << "+";
     for (c = 0; c < numCols; c++)
     {
-        os << (hasWall(r, c, Direction::SOUTH) ? "---+" : "   +");
+        os << (hasWall(r - 1, c, Direction::SOUTH) ? "---+" : "   +");
     }
 }
