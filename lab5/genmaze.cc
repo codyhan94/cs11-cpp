@@ -7,8 +7,8 @@
 
 #include "maze.hh"
 
-static void addDirectionOption(const Maze &m, const Location &current, Direction dir,
-                        vector<Direction> &v);
+static void addDirectionOption(const Maze &m, const Location &current,
+                               Direction dir, vector<Direction> &v);
 static Maze generateMaze(int numRows, int numCols);
 static void usage(const char *prog_name);
 
@@ -34,11 +34,11 @@ int main(int argc, char const *argv[])
 
     srand(time(nullptr));
 
+    /* Generate the desired maze and print it out. */
     Maze m = generateMaze(numRows, numCols);
-
     m.print(cout);
-
     cout << endl;
+
     return 0;
 }
 
@@ -50,30 +50,34 @@ int main(int argc, char const *argv[])
     1. The exterior of the maze is enclosed in walls.
     2. The maze contains no loops.
     3. The starting cell and ending cell each have three walls around them.
-    4. The maze contains no empty regions. */
+    4. The maze contains no empty regions.
+
+    The maze generated will always start at the top left and end at the bottom
+    right. */
 static Maze generateMaze(int numRows, int numCols)
 {
     Maze m(numRows, numCols);
     std::vector<Location> path;
 
+    /* Set up the maze with all walls to start. */
     m.clear();
     m.setAllWalls();
+
+    /* Top left is the start, bottom right is the end. */
     m.setStart(0, 0);
     m.setEnd(numRows - 1, numCols - 1);
 
+    /* Seed the algorithm with our starting location. */
     m.setVisited(0, 0);
     path.push_back(Location(0, 0));
 
     while (!path.empty())
     {
-        int chosen = rand() % path.size();
-        Location current = path[chosen];
-        // Location current = path.back();
+        Location current = path.back();
 
         if ((current.row == numRows - 1) && (current.col = numCols - 1))
         {
-            // path.pop_back();
-            path.erase(path.begin() + chosen);
+            path.pop_back();
             continue;
         }
 
@@ -93,8 +97,7 @@ static Maze generateMaze(int numRows, int numCols)
         if (options.empty())
         {
             /* No directions we can reach from this cell, need to backtrack. */
-            // path.pop_back();
-            path.erase(path.begin() + chosen);
+            path.pop_back();
             continue;
         }
 
@@ -107,9 +110,6 @@ static Maze generateMaze(int numRows, int numCols)
         Location next = m.getNeighborCell(current.row, current.col, d);
         m.setVisited(next.row, next.col);
         path.push_back(next);
-        // current = m.getNeighborCell(current.row, current.col, d);
-        // m.setVisited(current.row, current.col);
-        // path.push_back(current);
     }
 
     return m;
