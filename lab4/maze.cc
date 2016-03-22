@@ -241,9 +241,6 @@ bool Maze::hasWall(int cellRow, int cellCol, Direction direction) const
 void Maze::setWall(int cellRow, int cellCol, Direction direction)
 {
     int i = getArrayIndex(getWallArrayCoord(cellRow, cellCol, direction));
-    // printf("setting wall at %i in direction %d, cell row and col: %d, %d\n", i, direction, cellRow, cellCol);
-
-    // printf("0, 15, east: %d. 1, 0, west: %d\n", getArrayIndex(getWallArrayCoord(0, 15, Direction::EAST)), getArrayIndex(getWallArrayCoord(1, 0, Direction::WEST)));
     cells[i] = MazeCell::WALL;
 }
 
@@ -251,7 +248,6 @@ void Maze::setWall(int cellRow, int cellCol, Direction direction)
 void Maze::clearWall(int cellRow, int cellCol, Direction direction)
 {
     int i = getArrayIndex(getWallArrayCoord(cellRow, cellCol, direction));
-    // printf("clearing wall at %d\n", i);
     cells[i] = MazeCell::EMPTY;
 }
 
