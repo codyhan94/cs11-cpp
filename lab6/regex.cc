@@ -72,6 +72,24 @@ MatchChar::MatchChar(char c_) {
     c = c_;
 }
 
+/*! Initializes a character class matcher. */
+MatchFromSubset::MatchFromSubset(const string &s) {
+    match_subset = s;
+}
+
+/*! Initializes a character class excluder. */
+ExcludeFromSubset::ExcludeFromSubset(const string &s) {
+    exclude_subset = s;
+}
+
+
+/*! -------------------------------------------------------------------------
+    The match functions return true and set the endpoint of the passed range R
+    to be one past r.start if the match is successful. Otherwise, R is untouched
+    and the function returns false.
+----------------------------------------------------------------------------*/
+
+/*! Match a single character at s[r.start]. */
 bool MatchChar::match(const string &s, Range &r) const {
     if (r.start > s.length() - 1)
         return false;
@@ -84,6 +102,7 @@ bool MatchChar::match(const string &s, Range &r) const {
     return false;
 }
 
+/*! Match any single character at s[r.start]. */
 bool MatchAny::match(const string &s, Range &r) const {
     if (r.start > s.length() - 1)
         return false;
@@ -97,10 +116,7 @@ bool MatchAny::match(const string &s, Range &r) const {
     return false;
 }
 
-MatchFromSubset::MatchFromSubset(const string &s) {
-    match_subset = s;
-}
-
+/*! Match the character at s[r.start] with a character class. */
 bool MatchFromSubset::match(const string &s, Range &r) const {
     if (r.start > s.length() - 1)
         return false;
@@ -116,10 +132,7 @@ bool MatchFromSubset::match(const string &s, Range &r) const {
     return false;
 }
 
-ExcludeFromSubset::ExcludeFromSubset(const string &s) {
-    exclude_subset = s;
-}
-
+/*! Match the character at s[r.start] against a set of characters to exclude. */
 bool ExcludeFromSubset::match(const string &s, Range &r) const {
     if (r.start > s.length() - 1)
         return false;
