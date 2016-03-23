@@ -1,5 +1,6 @@
 #include "regex.hh"
 #include <iostream>
+#include <string>
 
 
 /* Initialize the regex operator to apply exactly once. */
@@ -66,3 +67,168 @@ Range RegexOperator::popMatch() {
     return r;
 }
 
+/* Initializes a single character matcher. */
+MatchChar::MatchChar(char c_) {
+    c = c_;
+}
+
+bool MatchChar::match(const string &s, Range &r) const {
+    if (r.start > s.length() - 1)
+        return false;
+
+    if (s[r.start] == c) {
+        r.end = r.start + 1;
+        return true;
+    }
+
+    return false;
+}
+
+bool MatchAny::match(const string &s, Range &r) const {
+    if (r.start > s.length() - 1)
+        return false;
+
+    /* If there are any characters in the string, the match will succeed. */
+    if (s.length() > 0) {
+        r.end = r.start + 1;
+        return true;
+    }
+
+    return false;
+}
+
+MatchFromSubset::MatchFromSubset(const string &s) {
+    match_subset = s;
+}
+
+bool MatchFromSubset::match(const string &s, Range &r) const {
+    if (r.start > s.length() - 1)
+        return false;
+
+    char c = s[r.start];
+
+    /* If the character we are examining is in the match_subset, then success. */
+    if (match_subset.find(c) != string::npos) {
+        r.end = r.start + 1;
+        return true;
+    }
+
+    return false;
+}
+
+ExcludeFromSubset::ExcludeFromSubset(const string &s) {
+    exclude_subset = s;
+}
+
+bool ExcludeFromSubset::match(const string &s, Range &r) const {
+    if (r.start > s.length() - 1)
+        return false;
+
+    char c = s[r.start];
+
+    /* If the character is not in exclude_subset, then success. */
+    if (exclude_subset.find(c) == string::npos) {
+        r.end = r.start + 1;
+        return true;
+    }
+
+    return false;
+}
+
+/*! Parses a regex into a vector of regex operators. */
+vector<RegexOperator *> parseRegex(const string &expr) {
+    vector<RegexOperator *> regex;
+    int i;
+    char c;
+    RegexOperator *prev;
+    bool is_literal = false;
+    string char_class;
+    bool is_char_class = false;
+    bool invert = false;
+
+    for (i = 0; i < expr.length(); i++) {
+        c = expr[i];
+
+        if (is_char_class)
+        {
+            // TODO: Handle literals inside character classes properly.
+            // char_class += c;
+
+            switch (c) {
+            case '^':
+                invert = true;
+                break;
+            // case '\\':
+            //     is_literal = true;
+            //     break;
+            case ']':
+                // Add the character class.
+                if (invert) {
+                    regex.push_back(new ExcludeFromSubset(char_class));
+                } else {
+                    regex.push_back(new MatchFromSubset(char_class));
+                }
+                is_char_class = false;
+                invert = false;
+                char_class.clear();
+                break;
+
+            default:
+                char_class += c;
+                break;
+            }
+            continue;
+        }
+
+        if (is_literal) {
+            regex.push_back(new MatchChar(c));
+            is_literal = false;
+            continue;
+        }
+
+        switch (c) {
+        case '\\':
+            is_literal = true;
+            break;
+
+        case '[':
+            is_char_class = true;
+            break;
+
+        case '.':
+            regex.push_back(new MatchAny());
+            break;
+
+        case '?':
+            prev = regex.back();
+            prev->setMinRepeat(0);
+            prev->setMaxRepeat(1);
+            break;
+
+        case '*':
+            prev = regex.back();
+            prev->setMinRepeat(0);
+            prev->setMaxRepeat(-1);
+            break;
+
+        case '+':
+            prev = regex.back();
+            prev->setMinRepeat(1);
+            prev->setMaxRepeat(-1);
+            break;
+
+        default:
+            // just a character.
+            regex.push_back(new MatchChar(c));
+            break;
+        }
+    }
+
+    return regex;
+}
+
+void clearRegex(vector<RegexOperator *> regex) {
+    for (auto r : regex) {
+        delete r;
+    }
+}

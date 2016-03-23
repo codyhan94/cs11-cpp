@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -41,6 +42,10 @@ public:
         start = 0;
         end = 0;
     }
+
+    friend ostream &operator <<(ostream &os, const Range &r) {
+        return os << "[" << r.start << ", " << r.end << ")";
+    }
 };
 
 
@@ -60,6 +65,9 @@ class RegexOperator {
 public:
     RegexOperator();
 
+    // Empty virtual destructor for subclasses to override if necessary.
+    virtual ~RegexOperator() { }
+
     // Operations to support optional and repeat operations.
     int getMinRepeat() const;
     int getMaxRepeat() const;
@@ -70,9 +78,45 @@ public:
     void clearMatches();
     void pushMatch(const Range &r);
     int numMatches() const;
+
+    // Matching operations.
+    virtual bool match(const string &s, Range &r) const = 0;
     Range popMatch();
 };
 
+
+class MatchChar : public RegexOperator {
+private:
+    char c;  // The character that this class matches.
+public:
+    MatchChar(char c_);
+    bool match(const string &s, Range &r) const;
+};
+
+
+class MatchAny : public RegexOperator {
+public:
+    MatchAny() { }
+    bool match(const string &s, Range &r) const;
+};
+
+
+class MatchFromSubset : public RegexOperator {
+private:
+    string match_subset;
+public:
+    MatchFromSubset(const string &s);
+    bool match(const string &s, Range &r) const;
+};
+
+
+class ExcludeFromSubset : public RegexOperator {
+private:
+    string exclude_subset;
+public:
+    ExcludeFromSubset(const string &s);
+    bool match(const string &s, Range &r) const;
+};
 
 vector<RegexOperator *> parseRegex(const string &expr);
 void clearRegex(vector<RegexOperator *> regex);

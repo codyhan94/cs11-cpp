@@ -3,11 +3,33 @@
 #include <iostream>
 
 
+static Range findAtIndex(vector<RegexOperator *> regex, const string &s, int start);
+
 // Set this to 1 if you need to see the output of the regular expression
 // matching engine as it attempts to match.  You should not need to do this
 // for the assignment, only if you decide to play with the engine itself.
 #define VERBOSE 0
 
+Range find(vector<RegexOperator *> regex, const string &s) {
+    int i = 0;
+    Range rv;
+
+    while (i < s.length()) {
+        rv = findAtIndex(regex, s, i);
+        if ((rv.start != -1) || (rv.end != -1))
+        {
+            return rv;
+        }
+        i++;
+    }
+
+    return Range(-1, -1);
+}
+
+bool match(vector<RegexOperator *> regex, const string &s) {
+    Range found = find(regex, s);
+    return ((found.start == 0) && (found.end == s.length()));
+}
 
 /* This helper function implements the core of the regular-expression matching
  * algorithm, a simple backtracking algorithm that will attempt to consume as
@@ -19,7 +41,7 @@
  *
  * If the function cannot generate a match, it will return the range (-1, -1).
  */
-Range findAtIndex(vector<RegexOperator *> regex, const string &s, int start) {
+static Range findAtIndex(vector<RegexOperator *> regex, const string &s, int start) {
     if (VERBOSE) {
         cout << string(78, '-') << endl;
         cout << "Find regex in \"" << s << "\", starting at index " << start
