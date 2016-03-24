@@ -10,6 +10,9 @@ static Range findAtIndex(vector<RegexOperator *> regex, const string &s, int sta
 // for the assignment, only if you decide to play with the engine itself.
 #define VERBOSE 0
 
+/*! Finds the first range in S that matches REGEX.
+
+    Returns (-1, -1) if no substring of S matches REGEX. */
 Range find(vector<RegexOperator *> regex, const string &s) {
     int i = 0;
     Range rv;
@@ -26,6 +29,7 @@ Range find(vector<RegexOperator *> regex, const string &s) {
     return Range(-1, -1);
 }
 
+/*! Returns whether the entire string S matches REGEX. */
 bool match(vector<RegexOperator *> regex, const string &s) {
     Range found = find(regex, s);
     return ((found.start == 0) && (found.end == s.length()));
