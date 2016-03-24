@@ -15,6 +15,9 @@ $(MAIN): $(OBJS)
 .cc.o:
 	$(CXX) $(CPPFLAGS) -c $<
 
+test: $(MAIN)
+	./$(MAIN)
+
 clean:
 	rm -f *.o $(MAIN)
 

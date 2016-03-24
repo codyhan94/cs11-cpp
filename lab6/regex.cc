@@ -154,26 +154,34 @@ vector<RegexOperator *> parseRegex(const string &expr) {
     int i;
     char c;
     RegexOperator *prev;
-    bool is_literal = false;
     string char_class;
+
+    bool is_literal = false;
     bool is_char_class = false;
     bool invert = false;
 
+    /* Parse one character at a time. */
     for (i = 0; i < expr.length(); i++) {
         c = expr[i];
 
+        /*! Inside a character class, so at some point in the recent past we
+            read a '[' character and we have not yet read the closing ']'. */
         if (is_char_class)
         {
-            // TODO: Handle literals inside character classes properly.
-            // char_class += c;
+            /* Handle a literal inside a character class. */
+            if (is_literal) {
+                char_class += c;
+                is_literal = false;
+                continue;
+            }
 
             switch (c) {
             case '^':
                 invert = true;
                 break;
-            // case '\\':
-            //     is_literal = true;
-            //     break;
+            case '\\':
+                is_literal = true;
+                break;
             case ']':
                 // Add the character class.
                 if (invert) {
@@ -190,6 +198,7 @@ vector<RegexOperator *> parseRegex(const string &expr) {
                 char_class += c;
                 break;
             }
+            /* Finished parsing the character. */
             continue;
         }
 
@@ -199,12 +208,14 @@ vector<RegexOperator *> parseRegex(const string &expr) {
             continue;
         }
 
+        /* Parse a character outside of a character class. */
         switch (c) {
         case '\\':
             is_literal = true;
             break;
 
         case '[':
+            /* Toggle our parser to parse a character class. */
             is_char_class = true;
             break;
 
@@ -231,7 +242,7 @@ vector<RegexOperator *> parseRegex(const string &expr) {
             break;
 
         default:
-            // just a character.
+            /* Parse a regular character. */
             regex.push_back(new MatchChar(c));
             break;
         }
@@ -240,6 +251,7 @@ vector<RegexOperator *> parseRegex(const string &expr) {
     return regex;
 }
 
+/*! Free the memory allocated by a parsed regex string. */
 void clearRegex(vector<RegexOperator *> regex) {
     for (auto r : regex) {
         delete r;
